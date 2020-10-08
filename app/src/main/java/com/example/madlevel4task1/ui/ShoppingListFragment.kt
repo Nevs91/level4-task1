@@ -1,4 +1,4 @@
-package com.example.madlevel4task1
+package com.example.madlevel4task1.ui
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.madlevel4task1.R
 import com.example.madlevel4task1.adapters.ShoppingListAdapter
 import com.example.madlevel4task1.entities.Product
 import com.example.madlevel4task1.repositories.ProductRepository
