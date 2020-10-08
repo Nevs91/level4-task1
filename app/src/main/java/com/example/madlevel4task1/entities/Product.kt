@@ -11,7 +11,7 @@ data class Product(
     var name: String,
 
     @ColumnInfo(name = "quantity")
-    var quantity: Number,
+    var quantity: Short, // Int
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
