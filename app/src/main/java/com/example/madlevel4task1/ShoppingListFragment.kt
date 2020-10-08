@@ -1,9 +1,14 @@
 package com.example.madlevel4task1
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -45,6 +50,10 @@ class ShoppingListFragment : Fragment() {
         getShoppingListFromDatabase()
 
         initRv()
+
+        fabAddProduct.setOnClickListener {
+            showAddProductdialog();
+        }
     }
 
     private fun initRv() {
@@ -55,6 +64,50 @@ class ShoppingListFragment : Fragment() {
         rvShoppingList.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         createItemTouchHelper().attachToRecyclerView(rvShoppingList)
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showAddProductdialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(getString(R.string.add_product_dialog_title))
+
+        val dialogLayout = layoutInflater.inflate(R.layout.add_product_dialog, null)
+        val productName = dialogLayout.findViewById<EditText>(R.id.txt_product_name)
+        val amount = dialogLayout.findViewById<EditText>(R.id.txt_amount)
+
+        builder.setView(dialogLayout)
+        builder.setPositiveButton(R.string.dialog_ok_btn) { _: DialogInterface, _: Int ->
+            addProduct(productName, amount)
+        }
+        builder.show()
+    }
+
+    private fun addProduct(txtProductName: EditText, txtAmount: EditText) {
+        if (validateFields(txtProductName, txtAmount)) {
+            mainScope.launch {
+                val product = Product(
+                    name = txtProductName.text.toString(),
+                    quantity = txtAmount.text.toString().toShort()
+                )
+
+                withContext(Dispatchers.IO) {
+                    productRepository.insertProduct(product)
+                }
+
+                getShoppingListFromDatabase()
+            }
+        }
+    }
+
+    private fun validateFields(txtProductName: EditText, txtAmount: EditText): Boolean {
+        return if (txtProductName.text.toString().isNotBlank() &&
+            txtAmount.text.toString().isNotBlank()
+        ) {
+            true
+        } else {
+            Toast.makeText(activity, "Please fill in the fields", Toast.LENGTH_LONG).show()
+            false
+        }
     }
 
     /**
